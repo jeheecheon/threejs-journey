@@ -1,0 +1,7 @@
+{
+  "name": "threejs-journey",
+  "packageManager": "yarn@4.3.1",
+  "dependencies": {
+    "vite": "^5.3.2"
+  }
+}
