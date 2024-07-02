@@ -1254,10 +1254,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"three@npm:^0.166.1":
+  version: 0.166.1
+  resolution: "three@npm:0.166.1"
+  checksum: 10c0/a0ab08ead10d249fed621dcf0d55daec192f3f029ee4c5b8626d35e0eced69d3af078b423e7e8980da6512d565ff7789eead4012a48e0cfafda4cac0906002dc
+  languageName: node
+  linkType: hard
+
 "threejs-journey@workspace:.":
   version: 0.0.0-use.local
   resolution: "threejs-journey@workspace:."
   dependencies:
+    three: "npm:^0.166.1"
     vite: "npm:^5.3.2"
   languageName: unknown
   linkType: soft

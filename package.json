@@ -1,7 +1,21 @@
 {
   "name": "threejs-journey",
+  "version": "1.0.0",
   "packageManager": "yarn@4.3.1",
+  "main": "index.html",
+  "author": {
+    "email": "jeheecheon@gmail.com",
+    "name": "Jehee Cheon",
+    "url": "https://blog.jeheecheon.com"
+  },
+  "keywords": [],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "license": "MIT",
   "dependencies": {
+    "three": "^0.166.1",
     "vite": "^5.3.2"
   }
 }
