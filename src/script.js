@@ -1,5 +1,28 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls";
+import GUI from "lil-gui";
+import gsap from "gsap";
+
+/*
+    Debug
+*/
+const gui = new GUI({
+    title: "My Awesome GUI",
+    width: 300,
+    closeFolders: false,
+}).close();
+gui.hide();
+
+window.addEventListener("keydown", (event) => {
+    if (event.key === "h") {
+        // this is how to toggle gui
+        gui.show(gui._hidden);
+    }
+})
+
+const debugObject = {
+    materialColor: 0xff0000,
+};
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -37,21 +60,12 @@ window.addEventListener("dblclick", () => {
 const scene = new THREE.Scene();
 
 // Geometry and Material
-const x = 0, y = 0;
+const x = 0,
+    y = 0;
 
-const heartShape = new THREE.Shape();
-
-heartShape.moveTo( x + 5, y + 5 );
-heartShape.bezierCurveTo( x + 5, y + 5, x + 4, y, x, y );
-heartShape.bezierCurveTo( x - 6, y, x - 6, y + 7,x - 6, y + 7 );
-heartShape.bezierCurveTo( x - 6, y + 11, x - 3, y + 15.4, x + 5, y + 19 );
-heartShape.bezierCurveTo( x + 12, y + 15.4, x + 16, y + 11, x + 16, y + 7 );
-heartShape.bezierCurveTo( x + 16, y + 7, x + 16, y, x + 10, y );
-heartShape.bezierCurveTo( x + 7, y, x + 5, y + 5, x + 5, y + 5 );
-const geometry = new THREE.ShapeGeometry( heartShape );
-
+const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2);
 const material = new THREE.MeshBasicMaterial({
-    color: 0xff0000,
+    color: debugObject.materialColor,
     wireframe: true,
 });
 
@@ -59,6 +73,56 @@ const material = new THREE.MeshBasicMaterial({
 const mesh = new THREE.Mesh(geometry, material);
 mesh.rotation.x = Math.PI;
 scene.add(mesh);
+
+const myAwesomFolder = gui.addFolder("My Aweson folder");
+myAwesomFolder.close();
+
+myAwesomFolder
+    .add(mesh.position, "y")
+    .min(-3)
+    .max(3)
+    .step(0.01)
+    .name("elevation");
+
+myAwesomFolder.add(mesh, "visible").name("visible");
+
+myAwesomFolder.add(mesh.material, "wireframe").name("wireframe");
+
+myAwesomFolder
+    .addColor(debugObject, "materialColor")
+    .name("color")
+    .onChange(() => {
+        material.color.set(debugObject.materialColor);
+    });
+
+debugObject.spin = function () {
+    gsap.to(mesh.rotation, { duration: 1, y: mesh.rotation.y - Math.PI * 2 });
+};
+
+myAwesomFolder.add(debugObject, "spin").name("spin");
+
+debugObject.subdivision = 2;
+
+myAwesomFolder
+    .add(debugObject, "subdivision")
+    .min(2)
+    .max(100)
+    .step(1)
+    .name("subdivision")
+    // it will be triggered when the value is changed
+    .onFinishChange(() => {
+        // Dispose the old geometry. This is important to avoid memory leaks
+        mesh.geometry.dispose();
+
+        mesh.geometry = new THREE.BoxGeometry(
+            1,
+            1,
+            1,
+            debugObject.subdivision,
+            debugObject.subdivision,
+            debugObject.subdivision
+        );
+    });
 
 // Sizes
 const sizes = {
@@ -80,7 +144,7 @@ window.addEventListener("resize", () => {
 // Camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
 
-camera.position.z = 5;
+camera.position.z = 4;
 scene.add(camera);
 
 const controls = new OrbitControls(camera, canvas);

@@ -814,6 +814,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lil-gui@npm:^0.19.2":
+  version: 0.19.2
+  resolution: "lil-gui@npm:0.19.2"
+  checksum: 10c0/382062222f11393ca2748ac7cdd9af0dd2711530f0c85a070470b48902ee51c66a1ddfec0928570870c940fe2b790a7e557e207b774d1cee0e3718e1b1cd32c3
+  languageName: node
+  linkType: hard
+
 "lru-cache@npm:^10.0.1, lru-cache@npm:^10.2.0":
   version: 10.3.0
   resolution: "lru-cache@npm:10.3.0"
@@ -1315,6 +1322,7 @@ __metadata:
   resolution: "threejs-journey@workspace:."
   dependencies:
     gsap: "npm:3.12"
+    lil-gui: "npm:^0.19.2"
     three: "npm:^0.166.1"
     vite: "npm:^5.3.2"
     vite-plugin-restart: "npm:^0.4.1"

@@ -16,6 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "gsap": "3.12",
+    "lil-gui": "^0.19.2",
     "three": "^0.166.1"
   },
   "devDependencies": {
