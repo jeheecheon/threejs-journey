@@ -59,3 +59,22 @@ Users may have a screen with a diffrent pixel ratio (higher than 1) and would ha
 ```javascript
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 ```
+
+## 08. Geometries
+`vertices`(vertex): are coordinates in space. vertices are linked to create a `faces`
+
+Three.js built-in geometries
+All of the Geometires provided by Three.js inherit from `Geometry` Class!
+It was great to understand all of the built-in Gemotries from just playint with it on the official website. It provides each of the Geometries with a viewer!
+
+[BoxGeometry](https://threejs.org/docs/?q=Geometry#api/en/geometries/BoxGeometry)
+I could find other examples as well on the website...
+
+Three.js built-in shaders use a value of position attribute so I need to set the attribute appropriately when creating `BufferGeometry`!
+It should be done like this...
+```javascript
+const positionsArray = new Float32Array([0, 0, 0, 0, 1, 0, 1, 0, 0]);
+const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3);
+const geometry = new THREE.BufferGeometry();
+geometry.setAttribute("position", positionsAttribute);
+```

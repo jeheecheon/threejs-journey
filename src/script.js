@@ -1,6 +1,9 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls";
 
+// Canvas
+const canvas = document.querySelector("canvas.webgl");
+
 const cursor = {
     x: 0,
     y: 0,
@@ -30,20 +33,31 @@ window.addEventListener("dblclick", () => {
     }
 });
 
-// Canvas
-const canvas = document.querySelector("canvas.webgl");
-
 // Scnene
 const scene = new THREE.Scene();
 
+// Geometry and Material
+const x = 0, y = 0;
+
+const heartShape = new THREE.Shape();
+
+heartShape.moveTo( x + 5, y + 5 );
+heartShape.bezierCurveTo( x + 5, y + 5, x + 4, y, x, y );
+heartShape.bezierCurveTo( x - 6, y, x - 6, y + 7,x - 6, y + 7 );
+heartShape.bezierCurveTo( x - 6, y + 11, x - 3, y + 15.4, x + 5, y + 19 );
+heartShape.bezierCurveTo( x + 12, y + 15.4, x + 16, y + 11, x + 16, y + 7 );
+heartShape.bezierCurveTo( x + 16, y + 7, x + 16, y, x + 10, y );
+heartShape.bezierCurveTo( x + 7, y, x + 5, y + 5, x + 5, y + 5 );
+const geometry = new THREE.ShapeGeometry( heartShape );
+
+const material = new THREE.MeshBasicMaterial({
+    color: 0xff0000,
+    wireframe: true,
+});
+
 // Mesh
-const mesh = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshBasicMaterial({
-        color: 0xff0000,
-        // wireframe: true,
-    })
-);
+const mesh = new THREE.Mesh(geometry, material);
+mesh.rotation.x = Math.PI;
 scene.add(mesh);
 
 // Sizes
@@ -66,7 +80,7 @@ window.addEventListener("resize", () => {
 // Camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
 
-camera.position.z = 3;
+camera.position.z = 5;
 scene.add(camera);
 
 const controls = new OrbitControls(camera, canvas);
