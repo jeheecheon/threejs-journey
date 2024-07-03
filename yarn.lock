@@ -692,6 +692,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"gsap@npm:3.12":
+  version: 3.12.5
+  resolution: "gsap@npm:3.12.5"
+  checksum: 10c0/cb38e89bd577fc18c9cf77e4aeb83617603b1e0fa768fe8ca1acd836fd852936722e186a88c9cf6ece42e53407edd45324be2bfe35a41f424c5f2c2b33fd1a98
+  languageName: node
+  linkType: hard
+
 "http-cache-semantics@npm:^4.1.1":
   version: 4.1.1
   resolution: "http-cache-semantics@npm:4.1.1"
@@ -1307,6 +1314,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "threejs-journey@workspace:."
   dependencies:
+    gsap: "npm:3.12"
     three: "npm:^0.166.1"
     vite: "npm:^5.3.2"
     vite-plugin-restart: "npm:^0.4.1"
