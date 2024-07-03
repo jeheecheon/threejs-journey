@@ -1,6 +1,8 @@
 # My threejs learning journey
 
-What I did / learned from this course
+three.js 강의 수강하며 배운 것 정리  
+What I did / learned from this course  
+[Lesson link](https://threejs-journey.com/)
 
 ## 03. First Three.js Project
 - created various three.js objects, including `Scene`, `Object`, `BoxGeometry`, `MeshBasisMaterial`, `Mesh`, `PerspectiveCamera` and `WebGLRenderer`
