@@ -46,4 +46,6 @@ A list of controls available right now
 - [MapControls](https://threejs.org/docs/?q=control#examples/en/controls/TransformControls)
 - [ArchballControls](https://threejs.org/docs/?q=control#examples/en/controls/ArcballControls)
 
-+ In the latest versions of Three.js, DeviceOrientationControls has been removed because a reliable implementation across all devices was not possible.
+In the latest versions of Three.js, DeviceOrientationControls has been removed because a reliable implementation across all devices was not possible.
+
+![chrome-capture-2024-7-3](https://github.com/jeheecheon/threejs-journey/assets/62019774/616cff37-2562-4bd2-8d73-afaf272d4a9f)
