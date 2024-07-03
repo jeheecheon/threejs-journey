@@ -49,3 +49,13 @@ A list of controls available right now
 In the latest versions of Three.js, DeviceOrientationControls has been removed because a reliable implementation across all devices was not possible.
 
 ![chrome-capture-2024-7-3](https://github.com/jeheecheon/threejs-journey/assets/62019774/616cff37-2562-4bd2-8d73-afaf272d4a9f)
+
+## 07. Fullscreen and resizing
+- learned how to make canvas fit the screen.
+- fount out how to handle resize event to fit the canvas size accordingly.
+- learned how to have the user enter and exit fullscreen
+
+Users may have a screen with a diffrent pixel ratio (higher than 1) and would have bad expierence because of it. So I need to tell the renderer what pixel ratio a user has.
+```javascript
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+```
