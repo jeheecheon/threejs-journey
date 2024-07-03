@@ -78,3 +78,6 @@ const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3);
 const geometry = new THREE.BufferGeometry();
 geometry.setAttribute("position", positionsAttribute);
 ```
+
+![heart](https://github.com/jeheecheon/threejs-journey/assets/62019774/76130068-822c-4ea6-af74-9d0cc1f5380b)
+
