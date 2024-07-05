@@ -2,6 +2,15 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls";
 import GUI from "lil-gui";
 import gsap from "gsap";
+import colorImage from "./textures/door/color.jpg";
+import alphaImage from "./textures/door/alpha.jpg";
+import heightImage from "./textures/door/height.jpg";
+import normalImage from "./textures/door/normal.jpg";
+import ambientOcclusionImage from "./textures/door/ambientOcclusion.jpg";
+import metalnessImage from "./textures/door/metalness.jpg";
+import roughnessImage from "./textures/door/roughness.jpg";
+
+
 
 /*
     Debug
@@ -34,7 +43,7 @@ const cursor = {
 window.addEventListener("mousemove", (event) => {
     cursor.x = event.clientX / sizes.width - 0.5;
     cursor.y = -(event.clientY / sizes.height - 0.5);
-    console.log(cursor.x, cursor.y);
+    // console.log(cursor.x, cursor.y);
 });
 
 window.addEventListener("dblclick", () => {
@@ -59,19 +68,54 @@ window.addEventListener("dblclick", () => {
 // Scnene
 const scene = new THREE.Scene();
 
-// Geometry and Material
-const x = 0,
-    y = 0;
+/*
+    Textures
+*/
+
+const loadingManager = new THREE.LoadingManager();
+loadingManager.onStart = () => {
+    console.log("onStart");
+};
+loadingManager.onLoad = () => {
+    console.log("onLoad");
+}
+loadingManager.onProgress = () => {
+    console.log("onProgress");
+}
+loadingManager.onError = () => {
+    console.log("onError");
+}
+
+const textureLoader = new THREE.TextureLoader(loadingManager);
+const colorTexture = textureLoader.load(colorImage);
+const alphaTexture = textureLoader.load(alphaImage);
+const heightTexture = textureLoader.load(heightImage);
+const normalTexture = textureLoader.load(normalImage);
+const ambientOcclusionTexture = textureLoader.load(ambientOcclusionImage);
+const metalnessTexture = textureLoader.load(metalnessImage);
+const roughnessTexture = textureLoader.load(roughnessImage);
+
+colorTexture.colorSpace = THREE.SRGBColorSpace;
+
+// colorTexture.repeat.x = 2;
+// colorTexture.repeat.y = 3;
+// colorTexture.wrapS = THREE.MirroredRepeatWrapping;
+// colorTexture.wrapT = THREE.MirroredRepeatWrapping;
+
+// colorTexture.offset.x = 0.5;
+// colorTexture.offset.y = 0.5;
+
+colorTexture.center = new THREE.Vector2(0.5, 0.5);
+colorTexture.rotation = Math.PI / 4;
 
 const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2);
 const material = new THREE.MeshBasicMaterial({
-    color: debugObject.materialColor,
-    wireframe: true,
+    // color: debugObject.materialColor,
+    map: colorTexture
 });
 
 // Mesh
 const mesh = new THREE.Mesh(geometry, material);
-mesh.rotation.x = Math.PI;
 scene.add(mesh);
 
 const myAwesomFolder = gui.addFolder("My Aweson folder");
@@ -144,7 +188,7 @@ window.addEventListener("resize", () => {
 // Camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
 
-camera.position.z = 4;
+camera.position.z = 2;
 scene.add(camera);
 
 const controls = new OrbitControls(camera, canvas);

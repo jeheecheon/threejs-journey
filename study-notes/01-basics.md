@@ -130,3 +130,19 @@ const debugObject = {
 
 [lil-gui documentation](https://lil-gui.georgealways.com/)
 
+### 10. Texture
+Most used types of Texture
+- Color
+- Alpha (gray scale, black and gray)
+- Height (Need high subdivision)
+- Normal (lighting)
+- Ambient occulusion (gray scale, contrast, fake shadow)
+- metalness (gray scale, reflection)
+- roughness (gray scale, light dissipation)
+
+Textures above follow PBR principles!...
+PBR
+- PBR stands for Pyhsical based rendering.
+- many technics that tend to follow real-life directions to get relistic results
+- becoming the standard for realistic renders
+- many software, engins, and libraries are using it
