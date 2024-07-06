@@ -146,3 +146,8 @@ PBR
 - many technics that tend to follow real-life directions to get relistic results
 - becoming the standard for realistic renders
 - many software, engins, and libraries are using it
+
+### 11. Materials
+There are many material classes available.
+[documentation link](https://threejs.org/docs/#api/en/materials/MeshNormalMaterial)
+
