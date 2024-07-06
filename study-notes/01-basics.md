@@ -151,3 +151,5 @@ PBR
 There are many material classes available.
 [documentation link](https://threejs.org/docs/#api/en/materials/MeshNormalMaterial)
 
+### 12. Go live
+Learnt how to use Vercel CLI to deploy web projects.
