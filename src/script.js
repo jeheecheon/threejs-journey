@@ -6,10 +6,14 @@ import { FontLoader, TextGeometry, RGBELoader } from "three/addons";
 import matcapImage4 from "./textures/matcaps/4.png";
 import matcapImage5 from "./textures/matcaps/5.png";
 
+import environmentMap from "./textures/environmentMap/2k.hdr";
+
 /**
  * Debug
  */
-const gui = new GUI();
+const gui = new GUI({
+    title: "Practice 01 - 3D Text",
+});
 
 /**
  * Canvas
@@ -25,11 +29,12 @@ const scene = new THREE.Scene();
  * Textures
  */
 const textureLoader = new THREE.TextureLoader();
-const matcap5Texture = textureLoader.load(matcapImage5);
-const matcap4Texture = textureLoader.load(matcapImage4);
 
-matcap5Texture.colorSpace = THREE.SRGBColorSpace;
+const matcap4Texture = textureLoader.load(matcapImage4);
 matcap4Texture.colorSpace = THREE.SRGBColorSpace;
+
+const matcap5Texture = textureLoader.load(matcapImage5);
+matcap5Texture.colorSpace = THREE.SRGBColorSpace;
 
 /**
  * Objects
@@ -40,55 +45,69 @@ const donuts = [];
  * Fonts
  */
 const fontLoader = new FontLoader();
-fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
-    const textGeometry = new TextGeometry("Jehee Cheon", {
-        font,
-        size: 0.5,
-        depth: 0.2,
-        curveSegments: 128,
-        bevelEnabled: true,
-        bevelThickness: 0.03,
-        bevelSize: 0.02,
-        bevelOffset: 0,
-        bevelSegments: 5,
-    });
-    textGeometry.center();
+fontLoader.load(
+    `${import.meta.env.VITE_BASE}/fonts/helvetiker_regular.typeface.json`,
+    (font) => {
+        const textGeometry = new TextGeometry("Jehee Cheon", {
+            font,
+            size: 0.5,
+            depth: 0.2,
+            curveSegments: 128,
+            bevelEnabled: true,
+            bevelThickness: 0.03,
+            bevelSize: 0.02,
+            bevelOffset: 0,
+            bevelSegments: 5,
+        });
+        textGeometry.center();
 
-    const textMaterial = new THREE.MeshMatcapMaterial({
-        matcap: matcap5Texture,
-    });
-    const text = new THREE.Mesh(textGeometry, textMaterial);
+        const textMaterial = new THREE.MeshMatcapMaterial({
+            matcap: matcap5Texture,
+        });
 
-    scene.add(text);
+        const text = new THREE.Mesh(textGeometry, textMaterial);
+        gui.add(text.rotation, "x")
+            .min(-Math.PI)
+            .max(Math.PI)
+            .step(0.01)
+            .name("Text X");
+        gui.add(text.rotation, "y")
+            .min(-Math.PI)
+            .max(Math.PI)
+            .step(0.01)
+            .name("Text Y");
 
-    const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45);
-    const torusMaterial = new THREE.MeshMatcapMaterial({
-        matcap: matcap4Texture,
-    });
-    for (let i = 0; i < 100; ++i) {
-        const donutMesh = new THREE.Mesh(donutGeometry, torusMaterial);
+        scene.add(text);
 
-        donutMesh.position.x = (Math.random() - 0.5) * 10;
-        donutMesh.position.y = (Math.random() - 0.5) * 10;
-        donutMesh.position.z = (Math.random() - 0.5) * 10;
+        const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45);
+        const torusMaterial = new THREE.MeshMatcapMaterial({
+            matcap: matcap4Texture,
+        });
+        for (let i = 0; i < 100; ++i) {
+            const donutMesh = new THREE.Mesh(donutGeometry, torusMaterial);
 
-        donutMesh.rotation.x = (Math.random() - 0.5) * 2 * Math.PI;
-        donutMesh.rotation.y = (Math.random() - 0.5) * 2 * Math.PI;
+            donutMesh.position.x = (Math.random() - 0.5) * 10;
+            donutMesh.position.y = (Math.random() - 0.5) * 10;
+            donutMesh.position.z = (Math.random() - 0.5) * 10;
 
-        const scale = Math.random();
-        donutMesh.scale.set(scale, scale, scale);
+            donutMesh.rotation.x = (Math.random() - 0.5) * 2 * Math.PI;
+            donutMesh.rotation.y = (Math.random() - 0.5) * 2 * Math.PI;
 
-        donuts.push(donutMesh);
+            const scale = Math.random();
+            donutMesh.scale.set(scale, scale, scale);
 
-        scene.add(donutMesh);
+            donuts.push(donutMesh);
+
+            scene.add(donutMesh);
+        }
     }
-});
+);
 
 /**
  * Environment map
  */
 const rgbeLoader = new RGBELoader();
-rgbeLoader.load("./textures/environmentMap/2k.hdr", (environtMap) => {
+rgbeLoader.load(environmentMap, (environtMap) => {
     environtMap.mapping = THREE.EquirectangularReflectionMapping;
 
     scene.background = environtMap;
