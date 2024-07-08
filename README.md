@@ -12,7 +12,7 @@ My three.js journey following [Bruno Simon course](https://threejs-journey.com)
 [Click here to explore the project!](https://jeheecheon.github.io/threejs-journey/practice-01-3d-text)
 - Used helvetica font in typeface format to generate a simple 3d text.
 - Utilized built-in controlers (Orbit) to move around the space.
-- Created a hundred donut-like objects around the text to make it just loot better...
+- Created a hundred donut-like objects around the text to make it just look better...
 
 It's my first ever 3D project I made during the course
 
@@ -20,5 +20,7 @@ It's my first ever 3D project I made during the course
 ![image](https://github.com/jeheecheon/threejs-journey/assets/62019774/b099efa5-5c7b-4622-aa08-2658e18527e4)
 ### Practice 02 - Haunted House
 [Click here to explore the project!](https://jeheecheon.github.io/threejs-journey/practice-02-haunted-house)
-- Applied shadows mapping to improve performance
-- Aonverted texture images into webp format
+- Applied shadow mapping to improve performance
+- Converted texture images into webp format
+
+It's a to-be-continued project!. I am going to add more to this project later when I have learned more. 
