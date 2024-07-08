@@ -6,50 +6,50 @@ What I studied / learned during [this course](https://threejs-journey.com)
 
 ### 03. First Three.js Project
 
--   created various three.js objects, including `Scene`, `Object`, `BoxGeometry`, `MeshBasisMaterial`, `Mesh`, `PerspectiveCamera` and `WebGLRenderer`
--   rendered a Cube Mesh onto the screen
+- created various three.js objects, including `Scene`, `Object`, `BoxGeometry`, `MeshBasisMaterial`, `Mesh`, `PerspectiveCamera` and `WebGLRenderer`
+- rendered a Cube Mesh onto the screen
 
 ![image](https://github.com/jeheecheon/threejs-journey/assets/62019774/30d5affe-ac39-4f72-84c1-53ec849f5e8d)
 
 ### 04. First Three.js Project
 
--   discovered how to group 3d objects into a single unit.
--   learned how to scale, rotate and move using properties `position`, `rotation` and `scale`.
--   found out the usage of `AxesHelper`.
--   learned how to make camera focus on a specific point.
+- discovered how to group 3d objects into a single unit.
+- learned how to scale, rotate and move using properties `position`, `rotation` and `scale`.
+- found out the usage of `AxesHelper`.
+- learned how to make camera focus on a specific point.
 
 ![image](https://github.com/jeheecheon/threejs-journey/assets/62019774/a72c574d-7ca1-4b30-a0fc-bb2261b5085c)
 
 ### 05. Animations
 
--   learned how to make animate objects using requestAnimationFrame on the `window` object.
--   animated objects consistently on each frame using delta time value.
--   discovered how to use a built-in `Clock` class.
--   installed gressnsock library. learned this library called requestAnimationFrame on its own.
-    (it doesn't mean I don't need to render scene by myself.)
+- learned how to make animate objects using requestAnimationFrame on the `window` object.
+- animated objects consistently on each frame using delta time value.
+- discovered how to use a built-in `Clock` class.
+- installed gressnsock library. learned this library called requestAnimationFrame on its own.
+  (it doesn't mean I don't need to render scene by myself.)
 
 ### 06. Camera
 
 There are various types of cameras I can use.
 
--   `Camera` is just an abstract Camera ohter cameras inherit from.
--   `ArrayCamera` is used to render a scene with multible point of views.
--   `StreoCamera` to create an depth effot for special devices for example like VR headset...
--   `CubeCamera` make six renders, one on the left, one on the right, one backword and so on... to create a render of the surrounding. Three.js uses this one to make environment maps. Or things that needs reflection, refraction and shadow.
--   `OrthographicCamera` used to create a render of the scene without perspective.
--   `PerspectiveCamera` renders scnes with perspective info.
+- `Camera` is just an abstract Camera ohter cameras inherit from.
+- `ArrayCamera` is used to render a scene with multible point of views.
+- `StreoCamera` to create an depth effot for special devices for example like VR headset...
+- `CubeCamera` make six renders, one on the left, one on the right, one backword and so on... to create a render of the surrounding. Three.js uses this one to make environment maps. Or things that needs reflection, refraction and shadow.
+- `OrthographicCamera` used to create a render of the scene without perspective.
+- `PerspectiveCamera` renders scnes with perspective info.
 
 A list of controls available right now
 
--   [FlyControls](https://threejs.org/docs/?q=control#examples/en/controls/FlyControls)
--   [FirstPersonControls](https://threejs.org/docs/?q=control#examples/en/controls/FirstPersonControls)
--   [PointerLockControls](https://threejs.org/docs/?q=control#examples/en/controls/PointerLockControls)
--   [OrbicControls](https://threejs.org/docs/?q=control#examples/en/controls/OrbitControls)
--   [TrackballControls](https://threejs.org/docs/?q=control#examples/en/controls/TrackballControls)
--   [TransformControls](https://threejs.org/docs/?q=control#examples/en/controls/TransformControls)
--   [DragControls](https://threejs.org/docs/?q=control#examples/en/controls/TransformControls)
--   [MapControls](https://threejs.org/docs/?q=control#examples/en/controls/TransformControls)
--   [ArchballControls](https://threejs.org/docs/?q=control#examples/en/controls/ArcballControls)
+- [FlyControls](https://threejs.org/docs/?q=control#examples/en/controls/FlyControls)
+- [FirstPersonControls](https://threejs.org/docs/?q=control#examples/en/controls/FirstPersonControls)
+- [PointerLockControls](https://threejs.org/docs/?q=control#examples/en/controls/PointerLockControls)
+- [OrbicControls](https://threejs.org/docs/?q=control#examples/en/controls/OrbitControls)
+- [TrackballControls](https://threejs.org/docs/?q=control#examples/en/controls/TrackballControls)
+- [TransformControls](https://threejs.org/docs/?q=control#examples/en/controls/TransformControls)
+- [DragControls](https://threejs.org/docs/?q=control#examples/en/controls/TransformControls)
+- [MapControls](https://threejs.org/docs/?q=control#examples/en/controls/TransformControls)
+- [ArchballControls](https://threejs.org/docs/?q=control#examples/en/controls/ArcballControls)
 
 In the latest versions of Three.js, DeviceOrientationControls has been removed because a reliable implementation across all devices was not possible.
 
@@ -57,9 +57,9 @@ In the latest versions of Three.js, DeviceOrientationControls has been removed b
 
 ### 07. Fullscreen and resizing
 
--   learned how to make canvas fit the screen.
--   fount out how to handle resize event to fit the canvas size accordingly.
--   learned how to have the user enter and exit fullscreen
+- learned how to make canvas fit the screen.
+- fount out how to handle resize event to fit the canvas size accordingly.
+- learned how to have the user enter and exit fullscreen
 
 Users may have a screen with a diffrent pixel ratio (higher than 1) and would have bad expierence because of it. So I need to tell the renderer what pixel ratio a user has.
 
@@ -104,9 +104,9 @@ Debug tools available
 
 lil-gui
 
--   popular
--   well maintained
--   easy to use
+- popular
+- well maintained
+- easy to use
 
 To use the lil-gui
 first I needed to instal this library.
@@ -124,14 +124,16 @@ So I need to manage color values in a diffrent object like this.
 
 ```javascript
 const debugObject = {
-    color: "#ffffff",
+  color: "#ffffff",
 };
 ```
 
 [lil-gui documentation](https://lil-gui.georgealways.com/)
 
 ### 10. Texture
+
 Most used types of Texture
+
 - Color
 - Alpha (gray scale, black and gray)
 - Height (Need high subdivision)
@@ -142,14 +144,19 @@ Most used types of Texture
 
 Textures above follow PBR principles!...
 PBR
+
 - PBR stands for Pyhsical based rendering.
 - many technics that tend to follow real-life directions to get relistic results
 - becoming the standard for realistic renders
 - many software, engins, and libraries are using it
 
 ### 11. Materials
+
 There are many material classes available.
 [documentation link](https://threejs.org/docs/#api/en/materials/MeshNormalMaterial)
 
+Made a simple project: [Click here to explore the project!](https://jeheecheon.github.io/threejs-journey/practice-01-3d-text)
+
 ### 12. Go live
+
 Learnt how to use Vercel CLI to deploy web projects.
