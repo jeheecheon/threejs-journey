@@ -20,5 +20,5 @@ It's my first ever 3D project I made during the course
 ![image](https://github.com/jeheecheon/threejs-journey/assets/62019774/b099efa5-5c7b-4622-aa08-2658e18527e4)
 ### Practice 02 - Haunted House
 [Click here to explore the project!](https://jeheecheon.github.io/threejs-journey/practice-02-haunted-house)
-- applied shadows mapping to improve performance
-- converted texture images into webp format
+- Applied shadows mapping to improve performance
+- Aonverted texture images into webp format
