@@ -43,7 +43,7 @@ import doorRoughnessImage from "./textures/door/roughness.webp";
  * Base
  */
 // Debug
-const gui = new GUI();
+const gui = new GUI().close();
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");

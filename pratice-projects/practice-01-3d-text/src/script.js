@@ -13,7 +13,7 @@ import environmentMap from "./textures/environmentMap/2k.hdr";
  */
 const gui = new GUI({
     title: "Practice 01 - 3D Text",
-});
+}).close();
 
 /**
  * Canvas
