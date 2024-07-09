@@ -155,6 +155,7 @@ PBR
 There are many material classes available.
 [documentation link](https://threejs.org/docs/#api/en/materials/MeshNormalMaterial)
 
+![Practice 01 - 3D Text](https://github.com/jeheecheon/threejs-journey/assets/62019774/cc586568-d4d7-47fc-929e-07a280f90cc0)  
 Made a simple project: [Click here to explore the project!](https://jeheecheon.github.io/threejs-journey/practice-01-3d-text)
 
 ### 12. Go live

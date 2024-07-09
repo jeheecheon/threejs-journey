@@ -96,7 +96,7 @@ PointLight creates shadow maps in 6 directions, which is bad for performance!
 better to avoid using too many shadows whenever possible.
 
 ### 16. Haunded House
-
+![Practice 02 - Haunted House](https://github.com/jeheecheon/threejs-journey/assets/62019774/b099efa5-5c7b-4622-aa08-2658e18527e4)  
 Made a simple project: [Click here to explore the project!](https://jeheecheon.github.io/threejs-journey/practice-02-haunted-house)
 
 ### 17. Particles
@@ -105,15 +105,24 @@ Particles can be created by using built-in PointsMaterial class.
 Each vertex will be rendered as a particle with specified texture (When it's provided).
 
 #### alphaTest
-But What's behind from a particle can mistakenly be hidden. I should tell to GPU which pixel it should draw. It should be done by setting setting alphaTest val between 0 and 1. this way, the transparent values of texture will be used.  
+
+But What's behind from a particle can mistakenly be hidden. I should tell to GPU which pixel it should draw. It should be done by setting setting alphaTest val between 0 and 1. this way, the transparent values of texture will be used.
 
 #### depthTest
+
 Another solutuib is turning off the depthTest feature. When drawing, the WebGL tests if what's being drawn is closer than what's already drawn. That is called depth testing and can be deactivated.
 But turning off depthTest cna creates bug when there is another object with a different color in the scene!!!
 ![alt text](./images/depthTest.png)
 
 #### depthWrite
+
 The WebGL is testing if what's being drawn is closer than what's already drawn. The depth of what's being drawn is stored in what we call a depth buffer. Instead of not testing if the particle is closer than what's in this depth buffer, we can tell the WebGL not to write particles in that depth buffer
 
 #### blending
+
 By changing the blending property, we can tell the WebGL not only to draw the pixel, but also to add the color of that pixel to the color of the pixel already drawn. That will have a saturation effect that can look amazing.
+
+### 18. Galaxy Generator
+![Practice 03 - Galaxy](./images/galaxy.gif)  
+Made a simple project: [Click here to explore the project!](https://jeheecheon.github.io/threejs-journey/practice-03-galaxy)
+
