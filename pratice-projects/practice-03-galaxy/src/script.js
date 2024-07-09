@@ -6,7 +6,9 @@ import GUI from "lil-gui";
  * Base
  */
 // Debug
-const gui = new GUI();
+const gui = new GUI({
+    closeFolders: true,
+}).close();
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -210,6 +212,16 @@ scene.add(camera);
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 
+let stopRotating = false;
+window.addEventListener("mousedown", () => {
+    stopRotating = true;
+});
+window.addEventListener("mouseup", () => {
+    setTimeout(() => {
+        stopRotating = false;
+    }, 3500);
+});
+
 /**
  * Renderer
  */
@@ -226,6 +238,12 @@ const clock = new THREE.Clock();
 
 const tick = () => {
     const elapsedTime = clock.getElapsedTime();
+
+    if (!stopRotating) {
+        camera.position.z = Math.sin(elapsedTime) * 2 + 7;
+        camera.position.x = Math.cos(elapsedTime) - 2;
+        camera.position.y = Math.sin(elapsedTime) - 2;
+    }
 
     // Update controls
     controls.update();
