@@ -28,4 +28,5 @@ It's a to-be-continued project!. I am going to add more to this project later wh
 ---
 ![Practice 03 - Galaxy](./study-notes/images/galaxy.gif)  
 ### Practice 03 - Galaxy
+[Click here to explore the project!](https://jeheecheon.github.io/threejs-journey/practice-03-galaxy)
 - Used simple Trigonometry to generate our own galaxy
