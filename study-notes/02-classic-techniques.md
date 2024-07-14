@@ -126,3 +126,6 @@ By changing the blending property, we can tell the WebGL not only to draw the pi
 ![Practice 03 - Galaxy](./images/galaxy.gif)  
 Made a simple project: [Click here to explore the project!](https://jeheecheon.github.io/threejs-journey/practice-03-galaxy)
 
+### 19. Scroll based animation
+Leanrt how to make canvas transparent
+Discovered many interesting ways to trigger anmiations depending on mouse positions and movement.
