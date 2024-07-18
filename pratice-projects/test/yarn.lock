@@ -584,6 +584,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cannon@npm:^0.6.2":
+  version: 0.6.2
+  resolution: "cannon@npm:0.6.2"
+  checksum: 10c0/66c96f213435b0c451765628815e6165f5965460fef6b999a915674babeb9ad3a80d8dd33954cb5c2250ac461054625193fec0d1a3686a2952912619d02d75cb
+  languageName: node
+  linkType: hard
+
 "chalk@npm:^4.0.0":
   version: 4.1.2
   resolution: "chalk@npm:4.1.2"
@@ -1960,6 +1967,7 @@ __metadata:
   resolution: "threejs-journey@workspace:."
   dependencies:
     "@eslint/js": "npm:^9.6.0"
+    cannon: "npm:^0.6.2"
     dotenv: "npm:^16.4.5"
     eslint: "npm:9.x"
     globals: "npm:^15.8.0"

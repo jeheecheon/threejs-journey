@@ -1,20 +1,47 @@
 import * as THREE from "three";
+import { OrbitControls } from "three/addons";
 import GUI from "lil-gui";
-import gradientImage from "./textures/gradients/3.jpg";
-import gsap from "gsap";
+import CANNON from "cannon";
 
 /**
  * Debug
  */
 const gui = new GUI();
+const debugObject = {
+    createSphere: () => {
+        objectsToUpdate.push(
+            createSphere(Math.random() * 0.5, {
+                x: (Math.random() - 0.5) * 3,
+                y: 3,
+                z: (Math.random() - 0.5) * 3,
+            })
+        );
+    },
+    createBox: () => {
+        objectsToUpdate.push(
+            createBox(Math.random(), Math.random(), Math.random(), {
+                x: (Math.random() - 0.5) * 3,
+                y: 3,
+                z: (Math.random() - 0.5) * 3,
+            })
+        );
+    },
+    reset: () => {
+        for (const object of objectsToUpdate) {
+            // Remove body
+            object.body.removeEventListener("collide", playHitSound);
+            world.removeBody(object.body);
 
-const parameters = {
-    materialColor: "#ffeded",
+            // Remove mesh
+            scene.remove(object.mesh);
+        }
+
+        objectsToUpdate.splice(0, objectsToUpdate.length);
+    },
 };
-
-gui.addColor(parameters, "materialColor").onChange(() => {
-    material.color.set(parameters.materialColor);
-});
+gui.add(debugObject, "createSphere");
+gui.add(debugObject, "createBox");
+gui.add(debugObject, "reset");
 
 /**
  * Base
@@ -26,74 +53,87 @@ const canvas = document.querySelector("canvas.webgl");
 const scene = new THREE.Scene();
 
 /**
- * Objects
+ * Sounds
  */
-const objectsDistance = 4;
+const hitSound = new Audio("/sounds/hit.mp3");
+const playHitSound = (collision) => {
+    const impactStrength = collision.contact.getImpactVelocityAlongNormal();
+    if (impactStrength <= 1.5) return;
 
-const textureLoader = new THREE.TextureLoader();
-const gradientTexture = textureLoader.load(gradientImage);
-gradientTexture.magFilter = THREE.NearestFilter;
-
-const material = new THREE.MeshToonMaterial({
-    color: parameters.materialColor,
-    gradientMap: gradientTexture,
-});
-
-const mesh1 = new THREE.Mesh(new THREE.TorusGeometry(1, 0.4, 16, 60), material);
-const mesh2 = new THREE.Mesh(new THREE.ConeGeometry(1, 2, 32), material);
-const mesh3 = new THREE.Mesh(
-    new THREE.TorusKnotGeometry(0.8, 0.35, 100, 16),
-    material
-);
-
-mesh1.position.x = 2;
-mesh1.position.y = -objectsDistance * 0;
-mesh2.position.x = -2;
-mesh2.position.y = -objectsDistance * 1;
-mesh3.position.x = 2;
-mesh3.position.y = -objectsDistance * 2;
-
-scene.add(mesh1, mesh2, mesh3);
-
-const sectionMeshes = [mesh1, mesh2, mesh3];
+    hitSound.volume = Math.random();
+    hitSound.currentTime = 0;
+    hitSound.play();
+};
 
 /**
- * Particles
+ * Textures
  */
-// Geometry
-const particleCount = 1000;
-const positions = new Float32Array(particleCount * 3);
-const colors = new Float32Array(particleCount * 3);
-for (let i = 0; i < particleCount; i++) {
-    positions[i * 3 + 0] = (Math.random() - 0.5) * 10;
-    positions[i * 3 + 1] =
-        -objectsDistance * 3 * Math.random() + objectsDistance / 2;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
-    colors[i] = Math.random();
-}
-const particleGeometry = new THREE.BufferGeometry();
-particleGeometry.setAttribute(
-    "position",
-    new THREE.BufferAttribute(positions, 3)
+const textureLoader = new THREE.TextureLoader();
+const cubeTextureLoader = new THREE.CubeTextureLoader();
+
+const environmentMapTexture = cubeTextureLoader.load(
+    [
+        "/textures/environmentMaps/0/px.png",
+        "/textures/environmentMaps/0/nx.png",
+        "/textures/environmentMaps/0/py.png",
+        "/textures/environmentMaps/0/ny.png",
+        "/textures/environmentMaps/0/pz.png",
+        "/textures/environmentMaps/0/nz.png",
+    ],
+    () => {
+        console.log("Environment map loaded");
+    }
 );
-particleGeometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
-// Material
-const particleMaterial = new THREE.PointsMaterial({
-    size: 0.02,
-    sizeAttenuation: true,
-    vertexColors: true,
+/**
+ * Physics
+ */
+const world = new CANNON.World();
+world.gravity.set(0, -9.82, 0);
+world.broadphase = new CANNON.SAPBroadphase(world);
+world.allowSleep = true;
+
+// Floor
+const floorShape = new CANNON.Plane();
+const floorBody = new CANNON.Body({
+    mass: 0,
+    shape: floorShape,
 });
+floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(-1, 0, 0), Math.PI * 0.5);
+world.addBody(floorBody);
 
-// Points
-const particles = new THREE.Points(particleGeometry, particleMaterial);
-scene.add(particles);
+/**
+ * Floor
+ */
+const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(10, 10),
+    new THREE.MeshStandardMaterial({
+        color: "#777777",
+        metalness: 0.3,
+        roughness: 0.4,
+        envMap: environmentMapTexture,
+        envMapIntensity: 0.5,
+    })
+);
+floor.receiveShadow = true;
+floor.rotation.x = -Math.PI * 0.5;
+scene.add(floor);
 
 /**
  * Lights
  */
-const directionalLight = new THREE.DirectionalLight("#ffffff", 3);
-directionalLight.position.set(1, 1, 0);
+const ambientLight = new THREE.AmbientLight(0xffffff, 2.1);
+scene.add(ambientLight);
+
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+directionalLight.castShadow = true;
+directionalLight.shadow.mapSize.set(1024, 1024);
+directionalLight.shadow.camera.far = 15;
+directionalLight.shadow.camera.left = -7;
+directionalLight.shadow.camera.top = 7;
+directionalLight.shadow.camera.right = 7;
+directionalLight.shadow.camera.bottom = -7;
+directionalLight.position.set(5, 5, 5);
 scene.add(directionalLight);
 
 /**
@@ -121,91 +161,118 @@ window.addEventListener("resize", () => {
 /**
  * Camera
  */
-// Group
-const cameraGroup = new THREE.Group();
-scene.add(cameraGroup);
-
 // Base camera
 const camera = new THREE.PerspectiveCamera(
-    35,
+    75,
     sizes.width / sizes.height,
     0.1,
     100
 );
-camera.position.z = 6;
-cameraGroup.add(camera);
+camera.position.set(-3, 3, 3);
+scene.add(camera);
+
+// Controls
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
 
 /**
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
-    alpha: true,
 });
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 /**
- * Scroll
+ * Utils
  */
-let scrollY = window.scrollY;
-let currentSection = 0;
+const objectsToUpdate = [];
 
-window.addEventListener("scroll", () => {
-    scrollY = window.scrollY;
-    const newSection = Math.floor(scrollY / sizes.height);
-    if (newSection !== currentSection) {
-        currentSection = newSection;
-
-        gsap.to(sectionMeshes[currentSection].rotation, {
-            duration: 1.5,
-            ease: "power2.inOut",
-            x: "+=6",
-            y: "+=3"
-        });
-    }
+// Sphere
+const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
+const sphereMaterial = new THREE.MeshStandardMaterial({
+    metalness: 0.3,
+    roughness: 0.4,
+    envMap: environmentMapTexture,
 });
 
-/**
- * Cursor
- */
-const cursor = {
-    x: 0,
-    y: 0,
+const createSphere = (radius, position) => {
+    // Three.js mesh
+    const mesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    mesh.scale.set(radius, radius, radius);
+    mesh.castShadow = true;
+    mesh.position.copy(position);
+    scene.add(mesh);
+
+    // Cannon.js body
+    const shape = new CANNON.Sphere(radius);
+    const body = new CANNON.Body({
+        mass: 1,
+        position: new CANNON.Vec3(position.x, position.y, position.z),
+        shape,
+    });
+    body.position.copy(position);
+    body.addEventListener("collide", playHitSound);
+    world.addBody(body);
+
+    return { mesh, body };
 };
 
-window.addEventListener("mousemove", (event) => {
-    cursor.x = event.clientX / sizes.width - 0.5;
-    cursor.y = event.clientY / sizes.height - 0.5;
+// Box
+const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+const boxMaterial = new THREE.MeshStandardMaterial({
+    metalness: 0.3,
+    roughness: 0.4,
+    envMap: environmentMapTexture,
 });
+
+const createBox = (width, height, depth, position) => {
+    // Three.js mesh
+    const mesh = new THREE.Mesh(boxGeometry, boxMaterial);
+    mesh.scale.set(width, height, depth);
+    mesh.castShadow = true;
+    mesh.position.copy(position);
+    scene.add(mesh);
+
+    // Cannon.js body
+    const shape = new CANNON.Box(
+        new CANNON.Vec3(width * 0.5, height * 0.5, depth * 0.5)
+    );
+    const body = new CANNON.Body({
+        mass: 1,
+        position: new CANNON.Vec3(position.x, position.y, position.z),
+        shape,
+    });
+    body.position.copy(position);
+    body.addEventListener("collide", playHitSound);
+    world.addBody(body);
+
+    return { mesh, body };
+};
 
 /**
  * Animate
  */
 const clock = new THREE.Clock();
-let previousTime = 0;
-
+let oldElapsedTime = 0;
 const tick = () => {
     const elapsedTime = clock.getElapsedTime();
-    const deltaTime = elapsedTime - previousTime;
-    previousTime = elapsedTime;
+    const deltaTime = elapsedTime - oldElapsedTime;
+    oldElapsedTime = elapsedTime;
 
-    // Animate camera
-    camera.position.y = (-scrollY / sizes.height) * objectsDistance;
+    // Update physics world
+    world.step(1 / 60, deltaTime, 3);
 
-    const parallaxX = cursor.x;
-    const parallaxY = -cursor.y;
-    console.log(parallaxX, cameraGroup.position.x);
-    cameraGroup.position.x +=
-        (parallaxX - cameraGroup.position.x) * 2 * deltaTime;
-    cameraGroup.position.y +=
-        (parallaxY - cameraGroup.position.y) * 2 * deltaTime;
-
-    // Animdate objects
-    for (const mesh of sectionMeshes) {
-        mesh.rotation.x += deltaTime * 0.1;
-        mesh.rotation.y += deltaTime * 0.12;
+    for (const object of objectsToUpdate) {
+        object.mesh.position.copy(object.body.position);
+        object.mesh.quaternion.copy(object.body.quaternion);
     }
+
+    // Update controls
+    controls.update();
 
     // Render
     renderer.render(scene, camera);
