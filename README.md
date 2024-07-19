@@ -4,6 +4,7 @@ My three.js journey following [Bruno Simon course](https://threejs-journey.com)
 ## Study Notes
 - Chapter 01: Basics - [Click here](https://github.com/jeheecheon/threejs-journey/blob/master/study-notes/01-basics.md)
 - Chapter 02: Classic Techniques - [Click here](https://github.com/jeheecheon/threejs-journey/blob/master/study-notes/02-classic-techniques.md)
+- Chapter 03: Advanced Techniques - [Click here](https://github.com/jeheecheon/threejs-journey/blob/master/study-notes/03-advanced-techniques.md)
 
 ## Toy Projects
 
