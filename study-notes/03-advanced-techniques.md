@@ -81,3 +81,16 @@ mixer = new THREE.AnimationMixer(gltf.scene);
 const action = mixer.clipAction(gltf.animations[0]);
 action.play();
 ```
+
+### 22. Raycaster and Mouse Events
+To cast a ray and get the objects that intersect we can use two methods, intersectObject(...) (singular) and intersectObjects(...) (plural).  
+intersectObject(...) will test one object and intersectObjects(...) will test an array of objects  
+
+```js
+const intersect = raycaster.intersectObject(object2)
+console.log(intersect)
+
+const intersects = raycaster.intersectObjects([object1, object2, object3])
+console.log(intersects)
+```
+
