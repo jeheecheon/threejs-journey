@@ -75,7 +75,9 @@ This format is like the glTF-Binary format because it's only one file, but this 
 The only benefit of this format is to have only one easily editable file.
 
 #### Animation
+
 Animations should be handle this way in THREE.js
+
 ```js
 mixer = new THREE.AnimationMixer(gltf.scene);
 const action = mixer.clipAction(gltf.animations[0]);
@@ -83,27 +85,37 @@ action.play();
 ```
 
 ### 22. Raycaster and Mouse Events
+
 To cast a ray and get the objects that intersect we can use two methods, intersectObject(...) (singular) and intersectObjects(...) (plural).  
-intersectObject(...) will test one object and intersectObjects(...) will test an array of objects  
+intersectObject(...) will test one object and intersectObjects(...) will test an array of objects
 
 ```js
-const intersect = raycaster.intersectObject(object2)
-console.log(intersect)
+const intersect = raycaster.intersectObject(object2);
+console.log(intersect);
 
-const intersects = raycaster.intersectObjects([object1, object2, object3])
-console.log(intersects)
+const intersects = raycaster.intersectObjects([object1, object2, object3]);
+console.log(intersects);
 ```
 
 ### 24. Environment map
-Environment maps are those images surrounding the scene that can be used as a background, but also directly on the objects as reflection and lighting.  
 
-#### HDR  
-HDR stands for “High Dynamic Range”. the color values stored have a much higher range than a traditional image, which makes it ideal to store luminosity data.  
+Environment maps are those images surrounding the scene that can be used as a background, but also directly on the objects as reflection and lighting.
 
-#### RGBE  
+#### HDR
+
+HDR stands for “High Dynamic Range”. the color values stored have a much higher range than a traditional image, which makes it ideal to store luminosity data.
+
+#### RGBE
+
 “RGBE” stands for “Red Green Blue Exponent” where the exponent stores the brightness. RGBE is what we would call the encoding for the “HDR” format which justifies the name of the loader instead of HDRLoader.
 
 #### Grounded projected environment map
-One of the most annoying things when using an environment map as the background, is that objects look like they are flying. This is due to the fact that the environment map is infinitely far away. 
+
+One of the most annoying things when using an environment map as the background, is that objects look like they are flying. This is due to the fact that the environment map is infinitely far away.
 One of the solution for this is using `GroundedSkybox`. Downside are, first I need to find the right values (radius, height). The second is that the surrounding could look bad and ugly depending on the images I am using.
 
+### 25. Realistic render
+
+#### Tone mapping
+
+#### Aliasing
