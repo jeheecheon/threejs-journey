@@ -9,6 +9,7 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
  */
 const gltfLoader = new GLTFLoader();
 const rgbeLoader = new RGBELoader();
+const textureLoader = new THREE.TextureLoader();
 
 /**
  * Base
@@ -27,8 +28,9 @@ const scene = new THREE.Scene();
  */
 const updateAllMaterials = () => {
     scene.traverse((child) => {
-        if (child.isMesh) {
-            // Activate shadow here
+        if (child.isMesh && child.material.isMeshStandardMaterial) {
+            child.castShadow = true;
+            child.receiveShadow = true;
         }
     });
 };
@@ -49,6 +51,32 @@ rgbeLoader.load("/environmentMaps/0/2k.hdr", (environmentMap) => {
 });
 
 /**
+ * Directional light
+ */
+const directionalLight = new THREE.DirectionalLight(0xffffff, 6);
+directionalLight.position.set(-4, 6.5, 2.5);
+scene.add(directionalLight);
+
+gui.add(directionalLight, "intensity").min(0).max(10).step(0.001).name("lightIntensity");
+gui.add(directionalLight.position, "x").min(-10).max(10).step(0.001).name("lightX");
+gui.add(directionalLight.position, "y").min(-10).max(10).step(0.001).name("lightY");
+gui.add(directionalLight.position, "z").min(-10).max(10).step(0.001).name("lightZ");
+
+// Shadows
+directionalLight.castShadow = true;
+directionalLight.shadow.camera.far = 15;
+directionalLight.shadow.mapSize.set(1024, 1024);
+gui.add(directionalLight, "castShadow").name("lightShadow");
+
+// Helper
+const directionalLightHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
+scene.add(directionalLightHelper);
+
+// Target
+directionalLight.target.position.set(0, 4, 0);
+directionalLight.target.updateWorldMatrix();
+
+/**
  * Models
  */
 // Helmet
@@ -60,11 +88,66 @@ gltfLoader.load("/models/FlightHelmet/glTF/FlightHelmet.gltf", (gltf) => {
 });
 
 /**
+ * Floor
+ */
+const floorColorTexture = textureLoader.load(
+    "/textures/wood_cabinet_worn_long/wood_cabinet_worn_long_diff_1k.jpg"
+);
+floorColorTexture.colorSpace = THREE.SRGBColorSpace;
+const floorNormalTexture = textureLoader.load(
+    "/textures/wood_cabinet_worn_long/wood_cabinet_worn_long_nor_gl_1k.png"
+);
+const floorARMTexture = textureLoader.load(
+    "/textures/wood_cabinet_worn_long/wood_cabinet_worn_long_arm_1k.jpg"
+);
+
+const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(8, 8),
+    new THREE.MeshStandardMaterial({
+        map: floorColorTexture,
+        normalMap: floorNormalTexture,
+        aoMap: floorARMTexture,
+        roughnessMap: floorARMTexture,
+        metalnessMap: floorARMTexture
+    })
+);
+floor.rotation.x = -Math.PI * 0.5;
+scene.add(floor);
+
+/**
+ * Wall
+ */
+const wallColorTexture = textureLoader.load(
+    "/textures/castle_brick_broken_06/castle_brick_broken_06_diff_1k.jpg"
+);
+wallColorTexture.colorSpace = THREE.SRGBColorSpace;
+const wallNormalTexture = textureLoader.load(
+    "/textures/castle_brick_broken_06/castle_brick_broken_06_nor_gl_1k.png"
+);
+const wallARMTexture = textureLoader.load(
+    "/textures/castle_brick_broken_06/castle_brick_broken_06_arm_1k.jpg"
+);
+
+const wall = new THREE.Mesh(
+    new THREE.PlaneGeometry(8, 8),
+    new THREE.MeshStandardMaterial({
+        map: wallColorTexture,
+        normalMap: wallNormalTexture,
+        aoMap: wallARMTexture,
+        roughnessMap: wallARMTexture,
+        metalnessMap: wallARMTexture
+    })
+);
+wall.position.y = 4;
+wall.position.z = -4;
+scene.add(wall);
+
+/**
  * Sizes
  */
 const sizes = {
     width: window.innerWidth,
-    height: window.innerHeight,
+    height: window.innerHeight
 };
 
 window.addEventListener("resize", () => {
@@ -85,12 +168,7 @@ window.addEventListener("resize", () => {
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(
-    75,
-    sizes.width / sizes.height,
-    0.1,
-    100
-);
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
 camera.position.set(4, 5, 4);
 scene.add(camera);
 
@@ -104,6 +182,7 @@ controls.enableDamping = true;
  */
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas,
+    antialias: true
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -117,9 +196,17 @@ gui.add(renderer, "toneMapping", {
     Linear: THREE.LinearToneMapping,
     Reinhard: THREE.ReinhardToneMapping,
     Cineon: THREE.CineonToneMapping,
-    ACESFilmic: THREE.ACESFilmicToneMapping,
+    ACESFilmic: THREE.ACESFilmicToneMapping
 });
 gui.add(renderer, "toneMappingExposure").min(0).max(10).step(0.001);
+
+// Physical accurate lighting
+renderer.useLegacyLights = false;
+gui.add(renderer, "useLegacyLights");
+
+// Shadows
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 /**
  * Animate
