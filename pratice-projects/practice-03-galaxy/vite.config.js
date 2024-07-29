@@ -1,4 +1,5 @@
 import restart from "vite-plugin-restart";
+import glsl from "vite-plugin-glsl";
 
 export default {
     base: "/threejs-journey/practice-03-galaxy",
@@ -18,5 +19,6 @@ export default {
     assetsInclude: ["**/*.hdr"], // Include .hdr files
     plugins: [
         restart({ restart: ["./static/**"] }), // Restart server on static file change
+        glsl()
     ],
 };
