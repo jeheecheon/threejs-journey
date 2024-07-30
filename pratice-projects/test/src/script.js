@@ -1,19 +1,12 @@
 import * as THREE from "three";
-import { OrbitControls } from "three/addons";
+import { GLTFLoader, OrbitControls } from "three/addons";
 import GUI from "lil-gui";
-
-import waterVertex from "./shaders/water/vertex.glsl";
-import waterFragment from "./shaders/water/fragment.glsl";
 
 /**
  * Base
  */
 // Debug
-const gui = new GUI({ width: 340 });
-const debugObject = {
-    depthColor: "#186691",
-    surfaceColor: "#9bdbff"
-};
+const gui = new GUI();
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -22,107 +15,163 @@ const canvas = document.querySelector("canvas.webgl");
 const scene = new THREE.Scene();
 
 /**
- * Water
+ * Loaders
  */
-// Geometry
-const waterGeometry = new THREE.PlaneGeometry(2, 2, 512, 512);
+const textureLoader = new THREE.TextureLoader();
+const gltfLoader = new GLTFLoader();
+const cubeTextureLoader = new THREE.CubeTextureLoader();
+
+/**
+ * Update all materials
+ */
+const updateAllMaterials = () => {
+    scene.traverse((child) => {
+        if (child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial) {
+            child.material.envMapIntensity = 1;
+            child.material.needsUpdate = true;
+            child.castShadow = true;
+            child.receiveShadow = true;
+        }
+    });
+};
+
+/**
+ * Environment map
+ */
+const environmentMap = cubeTextureLoader.load([
+    "/textures/environmentMaps/0/px.jpg",
+    "/textures/environmentMaps/0/nx.jpg",
+    "/textures/environmentMaps/0/py.jpg",
+    "/textures/environmentMaps/0/ny.jpg",
+    "/textures/environmentMaps/0/pz.jpg",
+    "/textures/environmentMaps/0/nz.jpg"
+]);
+
+scene.background = environmentMap;
+scene.environment = environmentMap;
+
+/**
+ * Material
+ */
+
+// Textures
+const mapTexture = textureLoader.load("/models/LeePerrySmith/color.jpg");
+mapTexture.colorSpace = THREE.SRGBColorSpace;
+const normalTexture = textureLoader.load("/models/LeePerrySmith/normal.jpg");
 
 // Material
-const waterMaterial = new THREE.ShaderMaterial({
-    vertexShader: waterVertex,
-    fragmentShader: waterFragment,
-    uniforms: {
-        uTime: { value: 0 },
-
-        uBigWavesElevation: { value: 0.2 },
-        uBigWavesFrequency: { value: new THREE.Vector2(4, 1.5) },
-        uBigWavesSpeed: { value: 0.75 },
-
-        uSmallWavesElevation: { value: 0.15 },
-        uSmallWavesFrequency: { value: 3 },
-        uSmallWavesSpeed: { value: 0.2 },
-        uSmallWavesIterations: { value: 4 },
-
-        uDepthColor: { value: new THREE.Color(debugObject.depthColor) },
-        uSurfaceColor: { value: new THREE.Color(debugObject.surfaceColor) },
-        uColorOffset: { value: 0.173 },
-        uColorMultiplier: { value: 2.583 }
-    }
+const material = new THREE.MeshStandardMaterial({
+    map: mapTexture,
+    normalMap: normalTexture
 });
 
-// Debug
-gui.add(waterMaterial.uniforms.uBigWavesElevation, "value")
-    .min(0)
-    .max(1)
-    .step(0.001)
-    .name("uBigWavesElevation");
-
-gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, "x")
-    .min(0)
-    .max(10)
-    .step(0.001)
-    .name("uBigWavesFrequencyX");
-
-gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, "y")
-    .min(0)
-    .max(10)
-    .step(0.001)
-    .name("uBigWavesFrequencyY");
-
-gui.add(waterMaterial.uniforms.uBigWavesSpeed, "value")
-    .min(0)
-    .max(4)
-    .step(0.001)
-    .name("uBigWavesSpeed");
-
-gui.addColor(debugObject, "depthColor").onChange(() => {
-    waterMaterial.uniforms.uDepthColor.value.set(debugObject.depthColor);
+const depthMaterial = new THREE.MeshDepthMaterial({
+    depthPacking: THREE.RGBADepthPacking
 });
 
-gui.addColor(debugObject, "surfaceColor").onChange(() => {
-    waterMaterial.uniforms.uSurfaceColor.value.set(debugObject.surfaceColor);
+const customUniforms = {
+    uTime: { value: 0 }
+};
+
+material.onBeforeCompile = (shader) => {
+    shader.uniforms.uTime = customUniforms.uTime;
+
+    shader.vertexShader = shader.vertexShader.replace(
+        "#include <common>",
+        `
+#include <common>
+
+uniform float uTime;
+
+mat2 get2dRotateMatrix(float _angle)
+{
+    return mat2(cos(_angle), - sin(_angle), sin(_angle), cos(_angle));
+}
+            `
+    );
+
+    shader.vertexShader = shader.vertexShader.replace(
+        "#include <beginnormal_vertex>",
+        `
+            #include <beginnormal_vertex>
+            float angle = (position.y + uTime) * 0.9;
+            mat2 rotateMatrix = get2dRotateMatrix(angle);
+            objectNormal.xz = rotateMatrix * objectNormal.xz;
+        `
+    );
+
+    shader.vertexShader = shader.vertexShader.replace(
+        "#include <begin_vertex>",
+        `
+#include <begin_vertex>
+
+transformed.xz = rotateMatrix * transformed.xz;
+    `
+    );
+};
+
+depthMaterial.onBeforeCompile = (shader) => {
+    shader.uniforms.uTime = customUniforms.uTime;
+
+    shader.vertexShader = shader.vertexShader.replace(
+        "#include <common>",
+        `
+#include <common>
+
+uniform float uTime;
+
+mat2 get2dRotateMatrix(float _angle)
+{
+    return mat2(cos(_angle), - sin(_angle), sin(_angle), cos(_angle));
+}
+            `
+    );
+
+    shader.vertexShader = shader.vertexShader.replace(
+        "#include <begin_vertex>",
+        `
+#include <begin_vertex>
+float angle = (position.y + uTime) * 0.9;
+mat2 rotateMatrix = get2dRotateMatrix(angle);
+transformed.xz = rotateMatrix * transformed.xz;
+    `
+    );
+};
+
+/**
+ * Models
+ */
+gltfLoader.load("/models/LeePerrySmith/LeePerrySmith.glb", (gltf) => {
+    // Model
+    const mesh = gltf.scene.children[0];
+    mesh.rotation.y = Math.PI * 0.5;
+    mesh.material = material;
+    mesh.customDepthMaterial = depthMaterial;
+    scene.add(mesh);
+
+    // Update materials
+    updateAllMaterials();
 });
 
-gui.add(waterMaterial.uniforms.uColorOffset, "value")
-    .min(0)
-    .max(1)
-    .step(0.001)
-    .name("uColorOffset");
+/**
+ * Plane
+ */
+const plane = new THREE.Mesh(new THREE.PlaneGeometry(15, 15, 15), new THREE.MeshStandardMaterial());
+plane.rotation.y = Math.PI;
+plane.position.y = -5;
+plane.position.z = 5;
+scene.add(plane);
 
-gui.add(waterMaterial.uniforms.uColorMultiplier, "value")
-    .min(0)
-    .max(10)
-    .step(0.001)
-    .name("uColorMultiplier");
-
-gui.add(waterMaterial.uniforms.uSmallWavesElevation, "value")
-    .min(0)
-    .max(1)
-    .step(0.001)
-    .name("uSmallWavesElevation");
-
-gui.add(waterMaterial.uniforms.uSmallWavesFrequency, "value")
-    .min(0)
-    .max(30)
-    .step(0.001)
-    .name("uSmallWavesFrequency");
-
-gui.add(waterMaterial.uniforms.uSmallWavesSpeed, "value")
-    .min(0)
-    .max(4)
-    .step(0.001)
-    .name("uSmallWavesSpeed");
-
-gui.add(waterMaterial.uniforms.uSmallWavesIterations, "value")
-    .min(0)
-    .max(5)
-    .step(1)
-    .name("uSmallWavesIterations");
-
-// Mesh
-const water = new THREE.Mesh(waterGeometry, waterMaterial);
-water.rotation.x = -Math.PI * 0.5;
-scene.add(water);
+/**
+ * Lights
+ */
+const directionalLight = new THREE.DirectionalLight("#ffffff", 3);
+directionalLight.castShadow = true;
+directionalLight.shadow.mapSize.set(1024, 1024);
+directionalLight.shadow.camera.far = 15;
+directionalLight.shadow.normalBias = 0.05;
+directionalLight.position.set(0.25, 2, -2.25);
+scene.add(directionalLight);
 
 /**
  * Sizes
@@ -151,7 +200,7 @@ window.addEventListener("resize", () => {
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
-camera.position.set(1, 1, 1);
+camera.position.set(4, 1, -4);
 scene.add(camera);
 
 // Controls
@@ -162,8 +211,13 @@ controls.enableDamping = true;
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
+    canvas: canvas,
+    antialias: true
 });
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1;
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
@@ -175,8 +229,8 @@ const clock = new THREE.Clock();
 const tick = () => {
     const elapsedTime = clock.getElapsedTime();
 
-    // Update water
-    waterMaterial.uniforms.uTime.value = elapsedTime;
+    // Update material
+    customUniforms.uTime.value = elapsedTime;
 
     // Update controls
     controls.update();
