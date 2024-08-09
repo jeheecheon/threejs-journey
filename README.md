@@ -39,3 +39,15 @@ It's a to-be-continued project!. I am going to add more to this project later wh
 
 - Used simple Trigonometry to generate a galaxy
 - Used vertex&fragment shaders to animate(spin) the galaxy
+
+---
+
+![Practice 04 - Portal](https://github.com/user-attachments/assets/0f804948-fbd1-430d-aa6f-baccadf2f78d)
+
+### Practice 03 - Galaxy
+
+[Click here to explore the project!](https://jeheecheon.github.io/threejs-journey/practice-04-portal)
+
+- Create the whole scene except fireflies with Blender.
+- Animate the fireflies with shaders.
+- Optimize through joining all the meshes into one to reduce draw calls.
