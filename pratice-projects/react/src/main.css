@@ -1,5 +1,19 @@
-html, body, #root {
-    height: 100%;
-    margin: 0;
-    padding: 0;
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.label > div {
+  font-family: Helvetica, Arial;
+  position: absolute;
+  background-color: #00000088;
+  color: white;
+  padding: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  border-radius: 30px;
+  user-select: none;
 }

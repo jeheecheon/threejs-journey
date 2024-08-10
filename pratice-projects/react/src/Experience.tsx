@@ -1,25 +1,22 @@
 import { useRef } from "react";
-import { useFrame, extend, useThree, Object3DNode } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import { Group, Mesh } from "three";
+import {
+  OrbitControls,
+  TransformControls,
+  PivotControls,
+  Html,
+  Text,
+  Float,
+  MeshReflectorMaterial,
+} from "@react-three/drei";
 
-import { OrbitControls } from "three/addons";
 import CustomObject from "./CustomObject";
-
-extend({ OrbitControls });
-
-// Add types to ThreeElements elements so primitives pick up on it
-declare module "@react-three/fiber" {
-  interface ThreeElements {
-    orbitControls: Object3DNode<OrbitControls, typeof OrbitControls>;
-  }
-}
 
 function Experience() {
   const cube = useRef<Mesh>(null!);
   const group = useRef<Group>(null!);
-  const orbitControls = useRef<OrbitControls>(null!);
-
-  const { camera, gl } = useThree();
+  const sphere = useRef<Mesh>(null!);
 
   useFrame((state, delta) => {
     // const camera = state.camera;
@@ -30,16 +27,11 @@ function Experience() {
 
     cube.current.rotation.y += delta;
     // group.current.rotation.y += delta;
-    orbitControls.current.update();
   });
 
   return (
     <>
-      <orbitControls
-        ref={orbitControls}
-        args={[camera, gl.domElement]}
-        enableDamping
-      />
+      <OrbitControls makeDefault />
 
       <directionalLight position={[1, 2, 3]} intensity={1.5} />
       <ambientLight intensity={0.4} />
@@ -49,19 +41,50 @@ function Experience() {
       <group ref={group}>
         <mesh position={[0, -1, 0]} scale={20} rotation-x={[Math.PI / -2]}>
           <planeGeometry />
-          <meshStandardMaterial color={0x0ff0ff} />
+          {/* <meshStandardMaterial color={0x0ff0ff} /> */}
+          <MeshReflectorMaterial resolution={1024} mirror={0.1} />
         </mesh>
 
-        <mesh position-x={-3.5}>
-          <sphereGeometry />
-          <meshStandardMaterial color="orange" />
-        </mesh>
+        <PivotControls
+          anchor={[0, 0, 0]}
+          depthTest={false}
+          axisColors={["#9381ff", "#ff4d6d", "#7ae582"]}
+        >
+          <mesh ref={sphere} position-x={-3.5}>
+            <sphereGeometry />
+            <meshStandardMaterial color="orange" />
+            <Html
+              position={[1, 1, 0]}
+              wrapperClass="label"
+              center
+              distanceFactor={10}
+              occlude={[sphere, cube]}
+            >
+              This is a sphere!
+            </Html>
+          </mesh>
+        </PivotControls>
 
         <mesh ref={cube} position-x={3.5}>
           <boxGeometry args={[2, 2, 2]} />
           <meshStandardMaterial color="mediumpurple" />
         </mesh>
+        <TransformControls object={cube} />
       </group>
+
+      <Float speed={20} floatIntensity={0.1}>
+        <Text
+          position={[0, 0, 3]}
+          fontSize={1}
+          color="black"
+          anchorX="center"
+          anchorY="middle"
+          outlineWidth={0.02}
+          outlineColor="white"
+        >
+          I LOVE R3F, 안녕하세요
+        </Text>
+      </Float>
     </>
   );
 }
