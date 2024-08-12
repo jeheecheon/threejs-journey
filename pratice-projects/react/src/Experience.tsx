@@ -1,11 +1,28 @@
 import { Perf } from "r3f-perf";
-import { OrbitControls } from "@react-three/drei";
-import { Model } from "./Model";
-import { Suspense } from "react";
-import Placeholder from "./Placeholder";
-import Fox from "./Fox";
+import {
+  Center,
+  OrbitControls,
+  Text3D,
+  useMatcapTexture,
+} from "@react-three/drei";
+import { useRef, useState } from "react";
+import { Mesh, MeshMatcapMaterial, TorusGeometry } from "three";
+import { useFrame } from "@react-three/fiber";
 
 function Experience() {
+  const matcapTexture = useMatcapTexture("7B5254_E9DCC7_B19986_C8AC91", 256);
+
+  const torusGeometry = useRef<TorusGeometry>(null!);
+  const [material, setMaterial] = useState<MeshMatcapMaterial>(null!);
+  const donuts = useRef<Mesh[]>([]);
+
+  useFrame((_, delta) => {
+    donuts.current.forEach((donut) => {
+      donut.rotation.x += delta;
+      donut.rotation.y += delta;
+    });
+  });
+
   return (
     <>
       <Perf position="top-left" />
@@ -25,20 +42,52 @@ function Experience() {
         shadow-camera-bottom={-5}
       />
 
-      <mesh
-        receiveShadow
-        position={[0, -1, 0]}
-        scale={20}
-        rotation-x={[Math.PI / -2]}
-      >
-        <planeGeometry />
-        <meshStandardMaterial />
-      </mesh>
+      <torusGeometry ref={torusGeometry} args={[1, 0.6, 16, 32]} />
+      <meshMatcapMaterial
+        ref={(matcap) => {
+          if (matcap) {
+            setMaterial(matcap);
+          }
+        }}
+        matcap={matcapTexture[0]}
+      />
 
-      <Suspense fallback={<Placeholder position-y={0.5} scale={[2, 3, 4]} />}>
-        <Model position-x={5}/>
-        <Fox />
-      </Suspense>
+      {[...Array(100)].map((_, index) => (
+        <mesh
+          ref={(m) => {
+            if (m) {
+              donuts.current.push(m);
+            }
+          }}
+          key={index}
+          geometry={torusGeometry.current ?? undefined}
+          material={material ?? undefined}
+          position={[
+            (Math.random() - 0.5) * 10,
+            (Math.random() - 0.5) * 10,
+            (Math.random() - 0.5) * 10,
+          ]}
+          scale={0.2 + Math.random() * 0.05}
+          rotation={[Math.random() * Math.PI, Math.random() * Math.PI, 0]}
+        ></mesh>
+      ))}
+
+      <Center>
+        <Text3D
+          font="./fonts/helvetiker_regular.typeface.json"
+          size={0.75}
+          height={0.2}
+          curveSegments={12}
+          bevelEnabled
+          bevelThickness={0.02}
+          bevelSize={0.02}
+          bevelOffset={0}
+          bevelSegments={5}
+        >
+          Hello, world!
+          <meshMatcapMaterial matcap={matcapTexture[0]} />{" "}
+        </Text3D>
+      </Center>
     </>
   );
 }
