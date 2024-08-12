@@ -2,91 +2,93 @@ import { Perf } from "r3f-perf";
 import {
   Center,
   OrbitControls,
-  Text3D,
-  useMatcapTexture,
+  Sparkles,
+  useGLTF,
+  useTexture,
+  shaderMaterial,
 } from "@react-three/drei";
-import { useRef, useState } from "react";
-import { Mesh, MeshMatcapMaterial, TorusGeometry } from "three";
-import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
+import portalVertexShader from "./portal/vertex.glsl";
+import portalFragmentShader from "./portal/fragment.glsl";
+import { extend, Object3DNode, useFrame } from "@react-three/fiber";
+import { useRef } from "react";
+
+interface GLTFResult {
+  nodes: {
+    Merged: THREE.Mesh;
+    PoleLightA: THREE.Mesh;
+    PoleLightB: THREE.Mesh;
+    PortalLight: THREE.Mesh;
+  };
+}
+
+const PortalMaterial = shaderMaterial(
+  {
+    uTime: 0,
+    uColorStart: new THREE.Color("#ffffff"),
+    uColorEnd: new THREE.Color("#000000"),
+  },
+  portalVertexShader,
+  portalFragmentShader
+);
+
+extend({ PortalMaterial });
+
+// Add types to ThreeElements elements so primitives pick up on it
+declare module "@react-three/fiber" {
+  interface ThreeElements {
+    portalMaterial: Object3DNode<
+      THREE.ShaderMaterial,
+      typeof THREE.ShaderMaterial
+    >;
+  }
+}
 
 function Experience() {
-  const matcapTexture = useMatcapTexture("7B5254_E9DCC7_B19986_C8AC91", 256);
+  const { nodes } = useGLTF("./models/portal.glb") as unknown as GLTFResult;
 
-  const torusGeometry = useRef<TorusGeometry>(null!);
-  const [material, setMaterial] = useState<MeshMatcapMaterial>(null!);
-  const donuts = useRef<Mesh[]>([]);
+  const bakedTexture = useTexture("./textures/baked3.webp");
+  bakedTexture.flipY = false;
 
-  useFrame((_, delta) => {
-    donuts.current.forEach((donut) => {
-      donut.rotation.x += delta;
-      donut.rotation.y += delta;
-    });
+  const portalMaterialRef = useRef<THREE.ShaderMaterial>(null!);
+
+  useFrame((state, delta) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (portalMaterialRef.current as any).uTime += delta;
   });
 
   return (
     <>
       <Perf position="top-left" />
+      <color args={["#030202"]} attach="background" />
 
       <OrbitControls makeDefault />
+      <ambientLight intensity={1} />
 
-      <directionalLight
-        position={[0, 2, 5]}
-        intensity={1.5}
-        castShadow
-        shadow-mapSize={[1024, 1024]}
-        shadow-camera-far={15}
-        shadow-camera-near={0.1}
-        shadow-camera-left={-5}
-        shadow-camera-right={5}
-        shadow-camera-top={5}
-        shadow-camera-bottom={-5}
-      />
+      <Center scale={3}>
+        <Sparkles size={6} scale={[4, 2, 4]} position={[0, 1, 0]} />
 
-      <torusGeometry ref={torusGeometry} args={[1, 0.6, 16, 32]} />
-      <meshMatcapMaterial
-        ref={(matcap) => {
-          if (matcap) {
-            setMaterial(matcap);
-          }
-        }}
-        matcap={matcapTexture[0]}
-      />
-
-      {[...Array(100)].map((_, index) => (
+        <mesh geometry={nodes.Merged.geometry} position={nodes.Merged.position}>
+          <meshToonMaterial map={bakedTexture} />
+        </mesh>
         <mesh
-          ref={(m) => {
-            if (m) {
-              donuts.current.push(m);
-            }
-          }}
-          key={index}
-          geometry={torusGeometry.current ?? undefined}
-          material={material ?? undefined}
-          position={[
-            (Math.random() - 0.5) * 10,
-            (Math.random() - 0.5) * 10,
-            (Math.random() - 0.5) * 10,
-          ]}
-          scale={0.2 + Math.random() * 0.05}
-          rotation={[Math.random() * Math.PI, Math.random() * Math.PI, 0]}
-        ></mesh>
-      ))}
-
-      <Center>
-        <Text3D
-          font="./fonts/helvetiker_regular.typeface.json"
-          size={0.75}
-          height={0.2}
-          curveSegments={12}
-          bevelEnabled
-          bevelThickness={0.02}
-          bevelSize={0.02}
-          bevelOffset={0}
-          bevelSegments={5}
+          geometry={nodes.PoleLightA.geometry}
+          position={nodes.PoleLightA.position}
         >
-          Hello, world!
-          <meshMatcapMaterial matcap={matcapTexture[0]} />{" "}
-        </Text3D>
+          <meshBasicMaterial color="#ffffff" />
+        </mesh>
+        <mesh
+          geometry={nodes.PoleLightB.geometry}
+          position={nodes.PoleLightB.position}
+        >
+          <meshBasicMaterial color="#ffffff" />
+        </mesh>
+        <mesh
+          geometry={nodes.PortalLight.geometry}
+          position={nodes.PortalLight.position}
+        >
+          <portalMaterial ref={portalMaterialRef} />
+        </mesh>
       </Center>
     </>
   );

@@ -10,7 +10,7 @@ import "./main.css";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Canvas
-      shadows
+      flat
       dpr={[1, 2]}
       gl={{
         antialias: true,
