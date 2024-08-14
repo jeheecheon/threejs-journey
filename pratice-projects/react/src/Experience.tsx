@@ -1,79 +1,67 @@
-import { Perf } from "r3f-perf";
-import { OrbitControls } from "@react-three/drei";
-import * as THREE from "three";
-import { useRef } from "react";
-import { EffectComposer, ToneMapping } from "@react-three/postprocessing";
-import { ToneMappingMode } from "postprocessing";
-import Drunk from "./Drunk";
-import { useControls } from "leva";
-import { BlendFunction } from "postprocessing";
+import {
+  ContactShadows,
+  Environment,
+  Float,
+  Html,
+  PresentationControls,
+  Text,
+  useGLTF,
+} from "@react-three/drei";
 
 function Experience() {
-  const cubeRef = useRef<THREE.Mesh>(null!);
-  const drunkRef = useRef<THREE.Mesh>(null!);
-
-  const drunkProps = useControls("Drunk Effect", {
-    frequency: { value: 10, min: 1, max: 20 },
-    amplitude: { value: 0.1, min: 0, max: 1 },
-  });
+  const laptop = useGLTF(
+    "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/macbook/model.gltf"
+  );
 
   return (
     <>
-      <color args={["#ffffff"]} attach="background" />
+      <color args={["#241a1a"]} attach="background" />
 
-      <Perf position="top-left" />
+      <Environment preset="city" />
 
-      <OrbitControls makeDefault />
-      <directionalLight castShadow position={[1, 2, 3]} intensity={4.5} />
-      <ambientLight intensity={1.5} />
-
-      <EffectComposer multisampling={0}>
-        <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
-        {/* <Vignette
-          offset={0.3}
-          darkness={0.9}
-          blendFunction={BlendFunction.SOFT_LIGHT}
-        /> */}
-        {/* <Glitch
-          delay={new THREE.Vector2(0.5, 1)}
-          duration={new THREE.Vector2(0.1, 0.3)}
-          strength={new THREE.Vector2(0.2, 0.4)}
-          mode={GlitchMode.SPORADIC}
-        /> */}
-        {/* <Noise premultiply blendFunction={BlendFunction.SOFT_LIGHT} /> */}
-        {/* <Bloom luminanceThreshold={0.5} mipmapBlur /> */}
-        {/* <DepthOfField
-          focusDistance={0.025}
-          focalLength={0.025}
-          bokehScale={6}
-        /> */}
-        <Drunk
-          ref={drunkRef}
-          {...drunkProps}
-          blendFunction={BlendFunction.DARKEN}
-        />
-      </EffectComposer>
-
-      <mesh rotation-x={Math.PI / -2}>
-        <planeGeometry args={[10, 10]} />
-        <meshStandardMaterial color="lightgreen" />
-      </mesh>
-
-      <mesh
-        position={[1, 0.5, 0]}
-        onClick={(e) => {
-          e.stopPropagation();
-          console.log("Cliked");
-        }}
+      <PresentationControls
+        global
+        rotation={[0.13, 0.5, 0]}
+        polar={[-0.4, 0.2]}
+        azimuth={[-1, 1.15]}
+        config={{ mass: 2, tension: 400 }}
+        snap={{ mass: 4, tension: 400 }}
       >
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
+        <Float rotationIntensity={0.4} scale={1}>
+          <rectAreaLight
+            width={2.5}
+            height={1.65}
+            intensity={65}
+            color={"#ff6900"}
+            rotation={[-0.1, Math.PI, 0]}
+            position={[0, 0.55, -1.15]}
+          />
 
-      <mesh ref={cubeRef} position={[-1, 0.5, 0]}>
-        <sphereGeometry args={[0.5, 32, 32]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
+          <Text
+            font="./bangers-v20-latin-regular.woff"
+            fontSize={1}
+            position={[1.3, 0.75, 0.75]}
+            rotation-y={-1.25}
+            maxWidth={2}
+          >
+            Jehee Cheon
+          </Text>
+
+          <primitive object={laptop.scene} position-y={-1.2}>
+            <Html
+              transform
+              wrapperClass="htmlScreen"
+              distanceFactor={1.17}
+              position={[0, 1.56, -1.4]}
+              rotation-x={-0.256}
+            >
+              <iframe src="https://blog.jeheecheon.com" />
+            </Html>
+          </primitive>
+        </Float>
+      </PresentationControls>
+
+      <ContactShadows position-y={-1.4} opacity={0.4} scale={5} blur={2.4} />
     </>
   );
 }

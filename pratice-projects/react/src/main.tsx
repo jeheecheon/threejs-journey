@@ -10,6 +10,7 @@ import "./main.css";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Canvas
+      className="r3f"
       shadows
       flat
       dpr={[1, 2]}
@@ -20,8 +21,8 @@ createRoot(document.getElementById("root")!).render(
       camera={{
         fov: 45,
         near: 0.1,
-        far: 200,
-        position: [3, 2, 16],
+        far: 30,
+        position: [0, 0, 6],
       }}
     >
       <Experience />
