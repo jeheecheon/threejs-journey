@@ -22,8 +22,8 @@ function Experience() {
       <PresentationControls
         global
         rotation={[0.13, 0.5, 0]}
-        polar={[-0.4, 0.2]}
-        azimuth={[-1, 1.15]}
+        polar={[-0.22, 1.9]}
+        azimuth={[-0.1, 1.05]}
         config={{ mass: 2, tension: 400 }}
         snap={{ mass: 4, tension: 400 }}
       >
