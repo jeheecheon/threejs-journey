@@ -51,3 +51,15 @@ It's a to-be-continued project!. I am going to add more to this project later wh
 - Create the whole scene except fireflies with Blender.
 - Animate the fireflies with shaders.
 - Optimize through joining all the meshes into one to reduce draw calls.
+
+---
+
+![Practoce 05 - Laptop](https://github.com/user-attachments/assets/833bbe05-4e38-49b8-ac25-990def8c8000)
+
+### Practice 05 - Laptop
+
+[Click here to explore the project!](https://jeheecheon.github.io/threejs-journey/practice-05-laptop)
+
+- Used a free 3D GLTF model and attached my blog HTML to its screen.
+- Placed 3D text on the right side of the laptop.
+- Added a point light above the laptop to slightly illuminate it with an orange light.
