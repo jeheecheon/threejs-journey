@@ -17,7 +17,7 @@ function Experience() {
       <Perf position="top-left" />
       <Lights />
 
-      <Physics debug>
+      <Physics>
         <Level count={blocksCount} seed={blocksSeed} />
         <Player />
       </Physics>
