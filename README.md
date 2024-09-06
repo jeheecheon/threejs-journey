@@ -63,3 +63,14 @@ It's a to-be-continued project!. I am going to add more to this project later wh
 - Used a free 3D GLTF model and attached my blog HTML to its screen.
 - Placed 3D text on the right side of the laptop.
 - Added a point light above the laptop to slightly illuminate it with an orange light.
+
+---
+
+![Practoce 06 - Marble Race](https://github.com/user-attachments/assets/d3f97829-2b9d-4be8-9e23-bdefb5e76ae3)
+
+### Practice 06 - Marble Race
+
+[Click here to explore the project!](https://jeheecheon.github.io/threejs-journey/practice-06-marble-race)
+
+- Game: Marble Race
+- Used react-three-rapier for realistic physics like collisions and gravity
